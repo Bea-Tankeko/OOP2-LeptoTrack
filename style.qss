@@ -1,0 +1,185 @@
+/* LeptoTrack stylesheet */
+
+QMainWindow, QWidget#centralWidget {
+    background-color: #F4F7FB;
+    color: #172B4D;
+    font-family: "Segoe UI", Arial, sans-serif;
+    font-size: 10pt;
+}
+
+QLabel {
+    background: transparent;
+    color: #172B4D;
+}
+
+QLabel#pageTitle {
+    color: #102A43;
+    font-size: 25pt;
+    font-weight: 700;
+}
+
+QLabel#pageSubtitle {
+    color: #627D98;
+    font-size: 10pt;
+}
+
+QLabel#scopeLabel {
+    color: #147D76;
+    font-size: 8pt;
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+
+QLabel#statusBadge {
+    background-color: #E0F2F1;
+    color: #147D76;
+    border: 1px solid #B2DFDB;
+    border-radius: 12px;
+    padding: 8px 12px;
+    font-size: 8pt;
+    font-weight: 700;
+}
+
+QFrame#statCard, QFrame#panel, QFrame#capacityCard {
+    background-color: #FFFFFF;
+    border: 1px solid #E2E8F0;
+    border-radius: 10px;
+}
+
+QLabel#statTitle {
+    color: #627D98;
+    font-size: 9pt;
+    font-weight: 600;
+}
+
+QLabel#statValue {
+    color: #102A43;
+    font-size: 23pt;
+    font-weight: 700;
+}
+
+QLabel#sectionTitle {
+    color: #102A43;
+    font-size: 13pt;
+    font-weight: 700;
+}
+
+QLabel#chartPlaceholder {
+    background-color: #F8FAFC;
+    color: #829AB1;
+    border: 1px dashed #CBD5E1;
+    border-radius: 8px;
+    padding: 16px;
+}
+
+QLabel#capacityTitle {
+    color: #334E68;
+    font-size: 9pt;
+    font-weight: 700;
+}
+
+QLabel#capacityValue {
+    color: #102A43;
+    font-size: 11pt;
+    font-weight: 600;
+}
+
+QLabel#mutedText {
+    color: #829AB1;
+    font-size: 9pt;
+}
+
+QProgressBar#capacityProgress {
+    background-color: #E2E8F0;
+    border: none;
+    border-radius: 4px;
+    min-height: 8px;
+    max-height: 8px;
+}
+
+QProgressBar#capacityProgress::chunk {
+    background-color: #147D76;
+    border-radius: 4px;
+}
+
+QPushButton {
+    background-color: #64748B;
+    color: #FFFFFF;
+    border: none;
+    border-radius: 5px;
+    padding: 9px 13px;
+    font-weight: 600;
+}
+
+QPushButton:hover {
+    background-color: #475569;
+}
+
+QPushButton:pressed {
+    background-color: #334155;
+}
+
+QPushButton[role="add"] {
+    background-color: #147D76;
+}
+
+QPushButton[role="add"]:hover {
+    background-color: #0F665F;
+}
+
+QPushButton[role="edit"], QPushButton[role="refresh"] {
+    background-color: #64748B;
+}
+
+QPushButton[role="edit"]:hover, QPushButton[role="refresh"]:hover {
+    background-color: #475569;
+}
+
+QPushButton[role="delete"] {
+    background-color: #C03939;
+}
+
+QPushButton[role="delete"]:hover {
+    background-color: #A52A2A;
+}
+
+QTableWidget#facilityTable {
+    background-color: #FFFFFF;
+    alternate-background-color: #F8FAFC;
+    color: #334E68;
+    border: 1px solid #E2E8F0;
+    border-radius: 8px;
+    gridline-color: #E2E8F0;
+    selection-background-color: #D9F0ED;
+    selection-color: #102A43;
+}
+
+QTableWidget#facilityTable::item {
+    padding: 8px;
+    border: none;
+}
+
+QHeaderView::section {
+    background-color: #EDF2F7;
+    color: #334E68;
+    border: none;
+    border-bottom: 1px solid #CBD5E1;
+    padding: 10px 8px;
+    font-weight: 700;
+}
+
+QScrollBar:vertical {
+    background-color: #F1F5F9;
+    width: 10px;
+    margin: 0;
+}
+
+QScrollBar::handle:vertical {
+    background-color: #CBD5E1;
+    border-radius: 4px;
+    min-height: 25px;
+}
+
+QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical {
+    height: 0;
+}

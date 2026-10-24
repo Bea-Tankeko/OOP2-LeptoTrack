@@ -1,286 +1,231 @@
+import os
 import sys
-from PyQt6.QtWidgets import (
-    QApplication, QMainWindow, QWidget, QLabel, QPushButton,
-    QVBoxLayout, QHBoxLayout, QGridLayout, QTableWidget,
-    QLineEdit, QComboBox, QFrame, QHeaderView, QProgressBar
-)
+
 from PyQt6.QtCore import Qt, QRectF
 from PyQt6.QtGui import QPainter, QPen, QColor
+from PyQt6.QtWidgets import (
+    QApplication, QMainWindow, QWidget, QLabel, QPushButton,
+    QVBoxLayout, QHBoxLayout, QGridLayout, QTableWidget, QFrame,
+    QHeaderView, QProgressBar
+)
 
 
 class StatCard(QFrame):
-    def __init__(self, title, color):
+    def __init__(self, title):
         super().__init__()
         self.setObjectName("statCard")
-
         layout = QVBoxLayout(self)
-        layout.addWidget(QLabel(title))
+        layout.setContentsMargins(16, 14, 16, 14)
+        layout.setSpacing(8)
 
-        self.value = QLabel("—")
-        self.value.setStyleSheet(
-            f"font-size:25px;font-weight:bold;color:{color};"
-        )
-        layout.addWidget(self.value)
+        title_label = QLabel(title)
+        title_label.setObjectName("statTitle")
+        value_label = QLabel("—")
+        value_label.setObjectName("statValue")
+        layout.addWidget(title_label)
+        layout.addWidget(value_label)
+        layout.addStretch()
 
 
 class CapacityDonut(QWidget):
+    """Placeholder donut chart; connect real capacity data when available."""
     def __init__(self):
         super().__init__()
-        self.setMinimumSize(210, 210)
+        self.setMinimumSize(180, 180)
 
     def paintEvent(self, event):
         painter = QPainter(self)
         painter.setRenderHint(QPainter.RenderHint.Antialiasing)
-
         side = min(self.width(), self.height()) - 28
-        rect = QRectF(
-            (self.width() - side) / 2,
-            (self.height() - side) / 2,
-            side, side
-        )
-
-        pen = QPen(QColor("#E1E7ED"), 18)
+        rect = QRectF((self.width() - side) / 2, (self.height() - side) / 2,
+                      side, side)
+        pen = QPen(QColor("#E2E8F0"), 16)
+        pen.setCapStyle(Qt.PenCapStyle.FlatCap)
         painter.setPen(pen)
         painter.drawArc(rect, 0, 360 * 16)
-
-        painter.setPen(QColor("#173B56"))
-        painter.drawText(
-            self.rect(),
-            Qt.AlignmentFlag.AlignCenter,
-            "— / —\nAvailable Beds"
-        )
+        painter.setPen(QColor("#172B4D"))
+        painter.drawText(self.rect(), Qt.AlignmentFlag.AlignCenter,
+                         "— / —\nAvailable Beds")
+        painter.end()
 
 
 class CapacityBar(QFrame):
     def __init__(self, title):
         super().__init__()
+        self.setObjectName("capacityCard")
         layout = QVBoxLayout(self)
-        layout.setContentsMargins(0, 5, 0, 5)
+        layout.setContentsMargins(14, 12, 14, 12)
+        layout.setSpacing(8)
 
-        heading = QHBoxLayout()
-        heading.addWidget(QLabel(title))
-        heading.addStretch()
-        heading.addWidget(QLabel("— / —"))
-        layout.addLayout(heading)
+        title_label = QLabel(title)
+        title_label.setObjectName("capacityTitle")
+        value_label = QLabel("— / — beds")
+        value_label.setObjectName("capacityValue")
+        progress = QProgressBar()
+        progress.setObjectName("capacityProgress")
+        progress.setRange(0, 100)
+        progress.setValue(0)
+        progress.setTextVisible(False)
+        note = QLabel("No data available")
+        note.setObjectName("mutedText")
 
-        bar = QProgressBar()
-        bar.setRange(0, 100)
-        bar.setValue(0)
-        bar.setTextVisible(False)
-        bar.setFixedHeight(16)
-        layout.addWidget(bar)
-
-        layout.addWidget(QLabel("Availability not entered"))
+        layout.addWidget(title_label)
+        layout.addWidget(value_label)
+        layout.addWidget(progress)
+        layout.addWidget(note)
 
 
 class LeptoTrack(QMainWindow):
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("LeptoTrack | Healthcare Monitoring System")
-        self.resize(1350, 900)
+        self.setWindowTitle("LeptoTrack | Pasig City")
+        self.resize(1280, 850)
 
         central = QWidget()
+        central.setObjectName("centralWidget")
         self.setCentralWidget(central)
+        root = QVBoxLayout(central)
+        root.setContentsMargins(28, 24, 28, 24)
+        root.setSpacing(18)
 
-        main = QVBoxLayout(central)
-        main.setSpacing(12)
-
+        # Header
         header = QHBoxLayout()
-        branding = QVBoxLayout()
+        title_group = QVBoxLayout()
+        title_group.setSpacing(5)
 
         title = QLabel("LeptoTrack")
-        title.setObjectName("mainTitle")
-        branding.addWidget(title)
-        branding.addWidget(QLabel(
-            "Leptospirosis Patient Volume and Healthcare Facility Capacity Monitoring System"
-        ))
+        title.setObjectName("pageTitle")
+        subtitle = QLabel(
+            "Leptospirosis case monitoring and healthcare bed-capacity dashboard"
+        )
+        subtitle.setObjectName("pageSubtitle")
+        scope = QLabel("PROJECT SCOPE: PASIG CITY")
+        scope.setObjectName("scopeLabel")
+        title_group.addWidget(title)
+        title_group.addWidget(subtitle)
+        title_group.addWidget(scope)
 
-        header.addLayout(branding)
+        badge = QLabel("HEALTHCARE MONITORING")
+        badge.setObjectName("statusBadge")
+        badge.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        header.addLayout(title_group)
         header.addStretch()
+        header.addWidget(badge, alignment=Qt.AlignmentFlag.AlignTop)
+        root.addLayout(header)
 
-        badge = QLabel("FACILITY CAPACITY MONITORING")
-        badge.setObjectName("badge")
-        header.addWidget(badge)
-        main.addLayout(header)
-
+        # Statistic cards
         stats = QGridLayout()
-
-        self.facility_card = StatCard("Healthcare Facilities", "#147D76")
-        self.patient_card = StatCard("Reported Patients", "#D97706")
-        self.total_card = StatCard("Total Beds", "#3478C5")
-        self.available_card = StatCard("Available Beds", "#159B83")
-        self.icu_card = StatCard("Available ICU Beds", "#8E63B5")
-
-        for col, card in enumerate([
-            self.facility_card,
-            self.patient_card,
-            self.total_card,
-            self.available_card,
-            self.icu_card
+        stats.setHorizontalSpacing(14)
+        stats.setVerticalSpacing(14)
+        for column, name in enumerate([
+            "Total Reported Cases", "Active Cases",
+            "Recovered Cases", "Reported Deaths"
         ]):
-            stats.addWidget(card, 0, col)
+            stats.addWidget(StatCard(name), 0, column)
+        root.addLayout(stats)
 
-        main.addLayout(stats)
+        # Weekly trend and bed capacity
+        dashboard_row = QHBoxLayout()
+        dashboard_row.setSpacing(16)
 
-        visual_row = QHBoxLayout()
-
-        donut_frame = QFrame()
-        donut_frame.setObjectName("panel")
-        donut_layout = QVBoxLayout(donut_frame)
-        donut_layout.addWidget(QLabel("Overall Bed Availability"))
-
-        donut_layout.addWidget(
-            CapacityDonut(),
-            alignment=Qt.AlignmentFlag.AlignCenter
+        trend_panel = QFrame()
+        trend_panel.setObjectName("panel")
+        trend_layout = QVBoxLayout(trend_panel)
+        trend_layout.setContentsMargins(18, 16, 18, 18)
+        trend_layout.setSpacing(10)
+        trend_title = QLabel("Weekly Case Trend")
+        trend_title.setObjectName("sectionTitle")
+        placeholder = QLabel(
+            "Case trend visualization will appear here\n"
+            "when reporting data is available."
         )
+        placeholder.setObjectName("chartPlaceholder")
+        placeholder.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        placeholder.setMinimumHeight(250)
+        trend_layout.addWidget(trend_title)
+        trend_layout.addWidget(placeholder, 1)
 
-        occupied = QLabel("Occupied beds: —")
-        occupied.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        donut_layout.addWidget(occupied)
+        capacity_panel = QFrame()
+        capacity_panel.setObjectName("panel")
+        capacity_layout = QVBoxLayout(capacity_panel)
+        capacity_layout.setContentsMargins(18, 16, 18, 18)
+        capacity_layout.setSpacing(12)
+        capacity_title = QLabel("Healthcare Bed Capacity")
+        capacity_title.setObjectName("sectionTitle")
+        capacity_layout.addWidget(capacity_title)
+        capacity_layout.addWidget(CapacityDonut(), alignment=Qt.AlignmentFlag.AlignCenter)
+        capacity_layout.addWidget(CapacityBar("Hospital Beds"))
+        capacity_layout.addWidget(CapacityBar("ICU Beds"))
 
-        visual_row.addWidget(donut_frame, 1)
+        dashboard_row.addWidget(trend_panel, 3)
+        dashboard_row.addWidget(capacity_panel, 2)
+        root.addLayout(dashboard_row)
 
-        bars_frame = QFrame()
-        bars_frame.setObjectName("panel")
-        bars_layout = QVBoxLayout(bars_frame)
-        bars_layout.addWidget(QLabel("Capacity by Bed Type"))
-        bars_layout.addWidget(CapacityBar("General Beds"))
-        bars_layout.addWidget(CapacityBar("ICU Beds"))
-
-        warning = QLabel("Capacity status will appear when data is available.")
-        warning.setWordWrap(True)
-        warning.setStyleSheet(
-            "color:#64748B;font-weight:bold;padding:8px;"
+        # Facility reporting status
+        reporting_panel = QFrame()
+        reporting_panel.setObjectName("panel")
+        reporting_layout = QVBoxLayout(reporting_panel)
+        reporting_layout.setContentsMargins(18, 14, 18, 14)
+        reporting_layout.setSpacing(6)
+        reporting_title = QLabel("Facility Reporting Status")
+        reporting_title.setObjectName("sectionTitle")
+        reporting_note = QLabel(
+            "No facility reporting data available. Add healthcare facilities below to begin tracking."
         )
-        bars_layout.addWidget(warning)
-        bars_layout.addStretch()
+        reporting_note.setObjectName("mutedText")
+        reporting_layout.addWidget(reporting_title)
+        reporting_layout.addWidget(reporting_note)
+        root.addWidget(reporting_panel)
 
-        visual_row.addWidget(bars_frame, 2)
-        main.addLayout(visual_row)
+        # Facility records and actions
+        records_header = QHBoxLayout()
+        records_title = QLabel("Healthcare Facility Records")
+        records_title.setObjectName("sectionTitle")
+        records_header.addWidget(records_title)
+        records_header.addStretch()
 
-        section = QLabel("Healthcare Facility Records")
-        section.setObjectName("sectionTitle")
-        main.addWidget(section)
-
-        toolbar = QHBoxLayout()
-
-        search = QLineEdit()
-        search.setPlaceholderText("Search facility name or location...")
-
-        location = QComboBox()
-        location.addItems([
-            "All Locations",
-            "Metro Manila",
-            "Quezon City",
-            "Pasig City",
-            "Makati",
-            "Manila",
-            "Other Locations"
-        ])
-
-        toolbar.addWidget(search, 3)
-        toolbar.addWidget(location, 1)
-        main.addLayout(toolbar)
-
-        buttons = QHBoxLayout()
-
-        for text, color in [
-            ("+ Add Facility", "#147D76"),
-            ("Edit Record", "#64748B"),
-            ("Delete Record", "#C03939"),
-            ("Refresh", "#64748B")
+        for text, role in [
+            ("+ Add Facility", "add"),
+            ("Edit Record", "edit"),
+            ("Delete Record", "delete"),
+            ("Refresh", "refresh"),
         ]:
             button = QPushButton(text)
-            button.setStyleSheet(
-                f"background:{color};color:white;padding:9px;"
-                "border:none;border-radius:5px;"
-            )
-            buttons.addWidget(button)
+            button.setProperty("role", role)
+            button.setCursor(Qt.CursorShape.PointingHandCursor)
+            records_header.addWidget(button)
+        root.addLayout(records_header)
 
-        main.addLayout(buttons)
-
-        self.table = QTableWidget(0, 8)
-        self.table.setHorizontalHeaderLabels([
-            "Facility ID",
-            "Facility Name",
-            "Location",
-            "Contact Number",
-            "Patients",
-            "Total Beds",
-            "Bed Availability",
-            "Last Updated"
+        self.facility_table = QTableWidget(0, 7)
+        self.facility_table.setObjectName("facilityTable")
+        self.facility_table.setHorizontalHeaderLabels([
+            "Facility Name", "Facility Type", "Total Beds",
+            "Available Beds", "ICU Beds", "Cases Reported", "Last Updated"
         ])
-
-        self.table.horizontalHeader().setSectionResizeMode(
+        self.facility_table.horizontalHeader().setSectionResizeMode(
             QHeaderView.ResizeMode.Stretch
         )
-        self.table.verticalHeader().setVisible(False)
-        self.table.setAlternatingRowColors(True)
-        self.table.setMinimumHeight(220)
-        main.addWidget(self.table, 1)
+        self.facility_table.verticalHeader().setVisible(False)
+        self.facility_table.setEditTriggers(
+            QTableWidget.EditTrigger.NoEditTriggers
+        )
+        self.facility_table.setSelectionBehavior(
+            QTableWidget.SelectionBehavior.SelectRows
+        )
+        self.facility_table.setSelectionMode(
+            QTableWidget.SelectionMode.SingleSelection
+        )
+        self.facility_table.setAlternatingRowColors(True)
+        self.facility_table.setMinimumHeight(180)
+        root.addWidget(self.facility_table, 1)
 
-        self.setStyleSheet("""
-            QMainWindow, QWidget {
-                background:#F3F7FA;
-                color:#263B4D;
-                font-family:Arial;
-                font-size:12px;
-            }
-            #mainTitle {
-                font-size:28px;
-                font-weight:bold;
-                color:#147D76;
-            }
-            #sectionTitle {
-                font-size:18px;
-                font-weight:bold;
-            }
-            #badge {
-                background:#DDF2EE;
-                color:#147D76;
-                padding:10px;
-                border-radius:6px;
-                font-weight:bold;
-            }
-            #statCard, #panel {
-                background:white;
-                border:1px solid #DCE5ED;
-                border-radius:9px;
-            }
-            #statCard {
-                padding:7px;
-            }
-            #panel {
-                padding:10px;
-            }
-            QLineEdit, QComboBox {
-                background:white;
-                border:1px solid #D5DEE8;
-                border-radius:5px;
-                padding:8px;
-            }
-            QProgressBar {
-                background:#E6EDF3;
-                border:none;
-                border-radius:7px;
-            }
-            QProgressBar::chunk {
-                background:#159B83;
-                border-radius:7px;
-            }
-            QTableWidget {
-                background:white;
-                alternate-background-color:#F7FAFC;
-                gridline-color:#E5EAF0;
-                border:1px solid #DCE4ED;
-            }
-            QHeaderView::section {
-                background:#E9F0F4;
-                padding:8px;
-                border:none;
-                font-weight:bold;
-            }
-        """)
+        # All widget styling is loaded from style.qss.
+        style_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "style.qss")
+        try:
+            with open(style_path, "r", encoding="utf-8") as stylesheet:
+                self.setStyleSheet(stylesheet.read())
+        except OSError as error:
+            print(f"Could not load style.qss: {error}")
 
 
 if __name__ == "__main__":
