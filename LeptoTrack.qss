@@ -1,0 +1,124 @@
+QMainWindow, QWidget {
+    background-color: #f3f8fc;
+    color: #203247;
+    font-family: "Segoe UI";
+    font-size: 10pt;
+}
+QScrollArea { border: none; background: #f3f8fc; }
+QFrame#statCard {
+    background-color: #ffffff;
+    border: 1px solid #d8e7f2;
+    border-top: 5px solid #18a6a6;
+    border-radius: 13px;
+}
+QFrame#panel {
+    background-color: #ffffff;
+    border: 1px solid #d8e7f2;
+    border-radius: 13px;
+}
+QLabel#mainTitle {
+    color: #126782;
+    font-size: 25pt;
+    font-weight: bold;
+}
+QLabel#subtitle, QLabel#mutedText, QLabel#welcomeSubtitle,
+QLabel#welcomeDescription, QLabel#welcomeFooter {
+    color: #60758a;
+}
+QLabel#badge {
+    color: #ffffff;
+    background-color: #168f9b;
+    border: none;
+    border-radius: 10px;
+    padding: 8px 12px;
+    font-weight: bold;
+}
+QLabel#statTitle { color: #60758a; font-size: 10pt; }
+QLabel#statValue {
+    color: #126782;
+    font-size: 23pt;
+    font-weight: bold;
+}
+QLabel#sectionTitle {
+    color: #126782;
+    font-size: 13pt;
+    font-weight: bold;
+    padding: 4px 0;
+}
+QLabel#warningBanner {
+    background-color: #fff0e6;
+    color: #b54708;
+    border: 1px solid #ffc48f;
+    border-radius: 8px;
+    padding: 10px;
+    font-weight: bold;
+}
+QWidget#welcomeLogo {
+    background-color: transparent;
+    border: none;
+}
+QLabel#hospitalName {
+    color: #168f9b;
+    font-size: 15pt;
+    font-weight: bold;
+}
+QLabel#welcomeTitle {
+    color: #126782;
+    font-size: 34pt;
+    font-weight: bold;
+}
+QLabel#welcomeSubtitle { font-size: 13pt; }
+QLabel#welcomeDescription { font-size: 11pt; }
+QLabel#welcomeFooter { font-size: 9pt; }
+QLineEdit, QDateEdit, QTableWidget {
+    background-color: #ffffff;
+    color: #203247;
+    border: 1px solid #c9dbe8;
+    border-radius: 6px;
+    padding: 7px;
+    selection-background-color: #168f9b;
+    selection-color: white;
+}
+QLineEdit:focus, QDateEdit:focus { border: 2px solid #18a6a6; }
+QHeaderView::section {
+    background-color: #dff2f4;
+    color: #126782;
+    padding: 8px;
+    border: none;
+    font-weight: bold;
+}
+QTableWidget {
+    gridline-color: #e0eaf1;
+    alternate-background-color: #f0f8fb;
+}
+QPushButton {
+    background-color: #e4edf5;
+    color: #24445d;
+    border: 1px solid #c9dbe8;
+    border-radius: 7px;
+    padding: 9px 14px;
+}
+QPushButton:hover {
+    background-color: #d2e8f0;
+    border: 1px solid #8fcbd5;
+}
+QPushButton#primaryButton {
+    background-color: #168f9b;
+    color: white;
+    border: none;
+    font-weight: bold;
+    padding: 10px 18px;
+}
+QPushButton#primaryButton:hover { background-color: #117785; }
+QPushButton[role="delete"] {
+    background-color: #ffe5e5;
+    color: #a52323;
+    border: 1px solid #ffcaca;
+}
+QPushButton[role="delete"]:hover { background-color: #ffd1d1; }
+QPushButton[role="refresh"] {
+    background-color: #e2f6e9;
+    color: #176b3a;
+    border: 1px solid #b9e7c9;
+}
+QDialog, QMessageBox { background-color: #f3f8fc; color: #203247; }
